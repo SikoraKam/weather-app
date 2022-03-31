@@ -1,12 +1,19 @@
 import React, { useEffect, useState } from "react";
-import { ScrollView, StyleSheet, Text, View } from "react-native";
+import {
+  ActivityIndicator,
+  SafeAreaView,
+  ScrollView,
+  StyleSheet,
+  Text,
+  View,
+} from "react-native";
 import axios from "axios";
 import DropDownPicker from "react-native-dropdown-picker";
 import { AvailablePlaces } from "./constants/availablePlaces";
 import { DropdownContent } from "./constants/dropdownContent";
 import { LineTemperatureChart } from "./components/LineTemperatureChart";
 import { IWeatherPayload, TimeOfDay } from "./types/weather";
-import { ToggleButton } from "react-native-paper";
+import { Snackbar, ToggleButton } from "react-native-paper";
 import { LineHumidityChart } from "./components/LineHumidityChart";
 
 const API_URL = "https://api.openweathermap.org/data/2.5/onecall?";
@@ -60,42 +67,46 @@ export const HomeScreen: React.FC = () => {
     setWeather(weather);
   };
 
+  if (isLoading) return <ActivityIndicator size="large" color="#afe1f1" />;
   return (
     <ScrollView style={styles.container}>
-      <View style={{ marginHorizontal: 12, marginBottom: 10 }}>
-        <DropDownPicker
-          open={isDropDownOpen}
-          value={selectedCity}
-          items={DropdownContent}
-          setOpen={setIsDropDownOpen}
-          multiple={false}
-          setValue={() => null}
-          onSelectItem={onSelectCity}
-          listMode="MODAL"
-        />
-      </View>
+      <SafeAreaView>
+        <View style={styles.dropdownContainer}>
+          <DropDownPicker
+            open={isDropDownOpen}
+            value={selectedCity}
+            items={DropdownContent}
+            setOpen={setIsDropDownOpen}
+            multiple={false}
+            setValue={() => null}
+            onSelectItem={onSelectCity}
+            listMode="MODAL"
+          />
+        </View>
 
-      {weather ? (
-        <LineTemperatureChart weather={weather} timeOfDay={toggleValue} />
-      ) : (
-        <Text>Choose city</Text>
-      )}
+        {weather ? (
+          <LineTemperatureChart weather={weather} timeOfDay={toggleValue} />
+        ) : (
+          <Text>Choose city</Text>
+        )}
 
-      <ToggleButton.Row
-        style={{ alignSelf: "center", marginVertical: 16 }}
-        onValueChange={(value) => setToggleValue(value)}
-        value={toggleValue}
-      >
-        <ToggleButton icon="weather-sunset-up" value={TimeOfDay.MORN} />
-        <ToggleButton icon="weather-sunny" value={TimeOfDay.DAY} />
-        <ToggleButton icon="weather-night" value={TimeOfDay.NIGHT} />
-      </ToggleButton.Row>
+        <ToggleButton.Row
+          style={{ alignSelf: "center", marginVertical: 16 }}
+          onValueChange={(value) => setToggleValue(value)}
+          value={toggleValue}
+        >
+          <ToggleButton icon="weather-sunset-up" value={TimeOfDay.MORN} />
+          <ToggleButton icon="weather-sunny" value={TimeOfDay.DAY} />
+          <ToggleButton icon="weather-night" value={TimeOfDay.NIGHT} />
+        </ToggleButton.Row>
 
-      {weather && <LineHumidityChart weather={weather} />}
+        {weather && <LineHumidityChart weather={weather} />}
+      </SafeAreaView>
     </ScrollView>
   );
 };
 
 const styles = StyleSheet.create({
   container: { marginTop: 50 },
+  dropdownContainer: { marginHorizontal: 12, marginBottom: 10 },
 });

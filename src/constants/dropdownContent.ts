@@ -9,4 +9,8 @@ export const DropdownContent = [
     label: "Warszawa",
     value: AvailablePlaces.WARSZAWA.name,
   },
+  {
+    label: "Wrocław",
+    value: AvailablePlaces.WROCLAW.name,
+  },
 ];
